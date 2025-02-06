@@ -1,6 +1,6 @@
 
 import json, os, copy, shutil
-from flask import Flask, request, Response, render_template
+from flask import Flask, request, Response, render_template, jsonify
 
 article_dir = os.path.join(os.getcwd(), 'articles')
 if not os.path.exists(article_dir):
