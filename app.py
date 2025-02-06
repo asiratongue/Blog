@@ -12,7 +12,7 @@
 import json, os, copy
 from send2trash import send2trash 
 from flask import Flask, request, Response, render_template
-article_dir = (r'G:\01101000111101\Programming\Projects\Beginner Backend Projects\Personal Blog\articles')
+article_dir = os.path.join(os.path.dirname(__file__), 'articles')
 #change directory to where your articles folder is located. 
 
 
