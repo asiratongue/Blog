@@ -1,35 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head> 
-
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            .space { margin-bottom: 20px; }
+            .article-container { max-width: 800px; margin: 0 auto; }
+            .loading { text-align: center; display: none; }
+        </style>
     </head>
-    <meta charset="UTF-8">
+    <body>
+        <h1 style="text-align: center; font-family: Arial, Helvetica, sans-serif;">blog</h1>
+        
+        <div class="article-container">
+            <ul style="list-style-type: none; padding: 0;" id="articles-list">
+                {% for article_title in article_title_list %}
+                    <li><a href={{ url_for('article_page', id=loop.index )}}>{{article_nested_dict[loop.index].title}}</a></li>
+                    <div class="space"></div>
+                    <li>{{article_nested_dict[loop.index].Date}}</li>
+                    <p>***********************************</p>
+                {% endfor %}
+            </ul>
+            <div class="loading" id="loading">Loading more articles...</div>
+        </div>
+
+        <p><a style="text-align: center;" href={{ url_for('dashboard')}}>click here to access the dashboard (admin only)</a></p>
+
+        <script>
+            let page = 1;
+            let loading = false;
+
+            window.addEventListener('scroll', () => {
+                if (loading) return;
+                
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                    loading = true;
+                    document.getElementById('loading').style.display = 'block';
+                    
+                    fetch(`/load-more?page=${page}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.articles.length) {
+                                data.articles.forEach(article => {
+                                    // Add new articles to the list
+                                    const articleHtml = `
+                                        <li><a href="/article/${article.id}">${article.title}</a></li>
+                                        <div class="space"></div>
+                                        <li>${article.Date}</li>
+                                        <p>***********************************</p>
+                                    `;
+                                    document.getElementById('articles-list').insertAdjacentHTML('beforeend', articleHtml);
+                                });
+                                page++;
+                            }
+                            loading = false;
+                            document.getElementById('loading').style.display = 'none';
+                        });
+                }
+            });
+        </script>
     </body>
-    <h1 style="text-align: center; font-family: Arial, Helvetica, sans-serif;">blog</h1>
-
-    <style>
-        .space {
-            margin-bottom: 20px;
-        }
-    </style>
-
-    <form action="/article", method = "POST">
-
-        <ul style = "list-style-type: none; padding: 0%; display: block; margin-right: auto; margin-left: auto; ">
-            {% for article_title in article_title_list %}
-
-                <li><a href={{ url_for('article_page', id=loop.index )}}>{{article_nested_dict[loop.index].title}}</a></li>
-                <div class = "space"></div>
-                <li>{{article_nested_dict[loop.index].Date}}</li>
-                <p> ***********************************</p>
-
-            {% endfor %}
-        </ul>
-
-    </form>
-
-    <p><a style="text-align: center;" href={{ url_for('dashboard')}}>click here to access the dashboard (admin only)</a></p>
-
 </html>
-
  
