@@ -71,6 +71,14 @@ def add_page():
             file.write(jsonConv)
         return redirect(url_for('dashboard'))
 
+@app.route('/load-more')
+def load_more():
+    page = int(request.args.get('page', 1))
+    start_idx = (page - 1) * 10
+    end_idx = start_idx + 10
+    articles = list(article_nested_dict.values())[start_idx:end_idx]
+    return jsonify({'articles': articles})
+
     return render_template('add.html')
 
 #[rest of the code remains the same]
